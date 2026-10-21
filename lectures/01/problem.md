@@ -2,14 +2,14 @@
 
 ## この回のゴール
 
-- 自分の fork を Codespaces で開き、Gemini API を呼び出せる
+- 自分の fork を Codespaces で開き、OpenAI API を呼び出せる
 - GitHub Copilot でコードを少し直せる
 - 作業ブランチから PR を出して提出できる（以降の回もこの流れで提出する）
 
 ## 準備するもの
 
 - GitHub の個人アカウント（会社が管理するアカウントは、組織の設定で Codespaces や Copilot が使えないことがあります）
-- Google の個人アカウント（会社の Google Workspace アカウントは、管理者の設定で AI Studio が使えないことがあります）
+- OpenAI Platform のアカウント（ChatGPT の契約とは別に API の利用設定・支払いが必要です）
 
 ## 演習（45分）
 
@@ -17,17 +17,17 @@
 
 講座 repo の右上の **Fork** から、自分のアカウントに fork を作ります。以降の作業はすべて自分の fork で行います。
 
-### 2. Gemini API キーを発行する
+### 2. OpenAI API キーを発行する
 
-[Google AI Studio](https://aistudio.google.com/apikey) で API キーを作成し、コピーします。
+[OpenAI Platform](https://platform.openai.com/api-keys) で API キーを作成し、コピーします。ChatGPT の契約（Free/Plus/Pro など）と API の利用料・支払い設定は別です。
 
-> APIキーは秘密情報です。コードやチャット、コミットに貼らないでください。漏れた場合は AI Studio でキーを削除し、作り直してください。
+> APIキーは秘密情報です。コードやチャット、コミットに貼らないでください。漏れた場合は OpenAI Platform でキーを削除し、作り直してください。
 
 ### 3. Codespaces secret に登録する
 
 GitHub の **Settings → Codespaces → Secrets → New secret** で次のように登録します。
 
-- Name: `GEMINI_API_KEY`
+- Name: `OPENAI_API_KEY`
 - Value: 手順2のキー
 - Repository access: **自分の fork** を選ぶ
 
@@ -88,7 +88,7 @@ GitHub の自分の fork で、`lec01` → `main` の PR を作成します。**
 モデルの切り替え例：
 
 ```bash
-AIE_MODEL=gemini-3.5-flash uv run python -m app.ask "LoRAとは何ですか？"
+AIE_MODEL=gpt-4o uv run python -m app.ask "LoRAとは何ですか？"
 ```
 
 temperature を変えるには、`generate_content` の `config` 引数を調べてみましょう。

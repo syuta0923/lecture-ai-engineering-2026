@@ -74,7 +74,7 @@ npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 pi
 ```
 
-- Gemini は環境変数 `GEMINI_API_KEY` を読むので、Codespaces secret があればそのまま使えます。Pi の中で `/model` と入力し、Gemini のモデルを選びます
+- OpenAI API は環境変数 `OPENAI_API_KEY` を読むので、Codespaces secret があればそのまま使えます。Pi の中で `/model` と入力し、OpenAI のモデルを選びます
 - npm のパッケージ名は `@earendil-works/pi-coding-agent` です（古い記事にある `@mariozechner/...` は旧名です）
 - Pi のシステムプロンプトは、公開リポジトリ https://github.com/earendil-works/pi の `packages/coding-agent/src/core/system-prompt.ts` にあります。自分の `INSTRUCTIONS` と比べ、何が書かれていて何が書かれていないかを見てみましょう
 - 公式ドキュメント：https://github.com/earendil-works/pi/tree/main/packages/coding-agent/docs

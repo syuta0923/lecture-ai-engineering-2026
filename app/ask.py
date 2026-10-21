@@ -1,10 +1,10 @@
-"""第1回: 素のLLMに1回だけ質問するスクリプト。
+"""第1回: 素のLLMに会話履歴を保って質問するスクリプト。
 
 使い方:
     uv run python -m app.ask "LoRAとは何ですか？"
-    uv run python -m app.ask            # 質問を省略すると、講座に固有の質問をする
+    uv run python -m app.ask            # 既定の質問のあと、続けて質問できる
 
-ツールも会話履歴も持たない「素の」呼び出し。
+ツールは使わず、Responses API の previous_response_id で会話履歴を保つ。
 講座に固有のことを聞くと、「分からない」と答えるか、一般論でもっともらしく答える
 （講座の実際とは違う）ことを確かめよう。
 （第3回で、用語集を検索できるエージェントにして改善する）
@@ -12,8 +12,7 @@
 
 import argparse
 
-from google import genai
-from google.genai import errors
+from openai import APIStatusError, OpenAI
 
 from app.config import MODEL, api_error_message, get_api_key
 
@@ -21,14 +20,32 @@ from app.config import MODEL, api_error_message, get_api_key
 DEFAULT_QUESTION = "AIE2026の講座の宿題にある「3レベル」とは何ですか？"
 
 
+class Conversation:
+    def __init__(self) -> None:
+        self.client = OpenAI(api_key=get_api_key())
+        self.previous_response_id: str | None = None
+
+    def ask(self, question: str) -> str:
+        request = {"model": MODEL, "input": question}
+        if self.previous_response_id is not None:
+            request["previous_response_id"] = self.previous_response_id
+        response = self.client.responses.create(**request)
+
+        if response.usage is not None:
+            print(
+                f"[usage] 入力トークン数: {response.usage.input_tokens}, "
+                f"出力トークン数: {response.usage.output_tokens}"
+            )
+        else:
+            print("[usage] トークン数を取得できませんでした")
+
+        self.previous_response_id = response.id
+        return response.output_text
+
+
 def ask(question: str) -> str:
-    client = genai.Client(api_key=get_api_key())
-    response = client.models.generate_content(model=MODEL, contents=question)
-
-    # TODO(第1回 演習): response.usage_metadata から
-    #   入力トークン数と出力トークン数を表示してみよう（Copilotに頼んでよい）
-
-    return response.text
+    """会話履歴を引き継がない単発の質問をする。"""
+    return Conversation().ask(question)
 
 
 def main() -> None:
@@ -37,11 +54,21 @@ def main() -> None:
     args = parser.parse_args()
 
     print(f"[model] {MODEL}")
-    print(f"[質問] {args.question}\n")
     try:
-        print(ask(args.question))
-    except errors.APIError as e:
-        print(api_error_message(e.code, e.message))
+        conversation = Conversation()
+        question = args.question
+        while True:
+            print(f"[質問] {question}\n")
+            print(conversation.ask(question))
+            try:
+                question = input("\n続けて質問してください（終了するには空行）: ").strip()
+            except EOFError:
+                print()
+                break
+            if not question:
+                break
+    except APIStatusError as e:
+        print(api_error_message(e.status_code, str(e)))
         raise SystemExit(1)
 
 

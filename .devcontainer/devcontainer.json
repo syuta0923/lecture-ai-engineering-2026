@@ -11,9 +11,9 @@
   },
   // Codespaces 作成時に登録を促すシークレット
   "secrets": {
-    "GEMINI_API_KEY": {
-      "description": "Google AI Studio で発行した Gemini API キー",
-      "documentationUrl": "https://aistudio.google.com/apikey"
+    "OPENAI_API_KEY": {
+      "description": "OpenAI Platform で発行した API キー",
+      "documentationUrl": "https://platform.openai.com/api-keys"
     }
   },
   "postCreateCommand": "pipx install uv && uv sync --frozen",

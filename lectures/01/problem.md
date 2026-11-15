@@ -83,7 +83,7 @@ GitHub の自分の fork で、`lec01` → `main` の PR を作成します。**
 |---|---|
 | 基礎 | 同じ質問を3回ずつ、モデルを変えて（`AIE_MODEL` 環境変数）、または temperature を変えて実行し、回答の違いを answer.md にまとめる |
 | 実装 | `app/ask.py` を改修し、会話履歴を保ったまま続けて質問できるようにする |
-| 発展 | 応答時間とトークン数を計測し、複数のモデルや質問で比較する。無料枠のレート制限との関係も考察する |
+| 発展 | 応答時間とトークン数を計測し、複数のモデルや質問で比較する。利用料金やレート制限との関係も考察する |
 
 モデルの切り替え例：
 
@@ -91,15 +91,6 @@ GitHub の自分の fork で、`lec01` → `main` の PR を作成します。**
 AIE_MODEL=gpt-4o uv run python -m app.ask "LoRAとは何ですか？"
 ```
 
-### 呼び出すモデルについての補足
-モデルの仕様は更新されることがあります。  
-gemini 3.5 flashにおいては、Gemini APIのドキュメントが更新され、非推奨となりgemini 3.6 flashへ転送されるようになりました。
+モデルの仕様や利用可能なモデルは変わることがあります。最新情報は [OpenAI のモデル一覧](https://platform.openai.com/docs/models) で確認してください。
 
-- 参考：Gemini 3.5 Flashのドキュメント
-https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash?hl=ja
-
-このように、サービスとして提供されているLLMは頻繁に仕様が変わるため、サービス仕様のドキュメントを確認するなどの習慣を付けておき仕様変更に対応しましょう。
-
-第1回の宿題においては、任意にモデルを変えて実施していただければ問題ありません。
-
-temperature を変えるには、`generate_content` の `config` 引数を調べてみましょう。
+temperature を変えるには、`app/ask.py` の `chat.completions.create` に渡す引数を調べてみましょう。
